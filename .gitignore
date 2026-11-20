@@ -1,0 +1,12 @@
+.DS_Store
+~$*
+.env
+*.pem
+*.key
+*.pfx
+credentials*
+secrets/
+.azure/
+tmp/
+temp/
+*.log

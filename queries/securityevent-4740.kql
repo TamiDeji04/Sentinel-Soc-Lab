@@ -1,0 +1,14 @@
+// Account lockout - Event ID 4740
+// Use in Log Analytics / Sentinel Logs for validation and analytics rules.
+SecurityEvent
+| where TimeGenerated > ago(15m)
+| where EventID == 4740
+| project
+    TimeGenerated,
+    Computer,
+    Account,
+    TargetAccount = TargetUserName,
+    SubjectAccount = SubjectUserName,
+    Activity,
+    EventID
+| sort by TimeGenerated desc

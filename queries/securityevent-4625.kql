@@ -1,0 +1,12 @@
+// Failed logons - Event ID 4625
+// Use in Log Analytics / Sentinel Logs for validation and analytics rules.
+SecurityEvent
+| where TimeGenerated > ago(15m)
+| where EventID == 4625
+| summarize
+    FailedLogonCount = count(),
+    FirstSeen = min(TimeGenerated),
+    LastSeen = max(TimeGenerated)
+    by Account, Computer, IpAddress, LogonType
+| where FailedLogonCount >= 5
+| sort by FailedLogonCount desc

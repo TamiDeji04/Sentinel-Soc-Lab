@@ -1,42 +1,41 @@
 # Detection: Failed Logons (Event ID 4625)
 
-## Purpose
+## Why I built this
 
-Detect repeated failed Windows logon attempts that may indicate password guessing or brute force.
+I wanted a straightforward rule that catches repeated failed Windows logons. That’s one of the first things I’d expect to look for in a SOC.
 
-## MITRE ATT&CK
+## MITRE ATT&CK mapping (lab)
 
 - Tactic: Credential Access
-- Technique: Brute Force (T1110) — lab mapping
+- Technique: Brute Force (T1110)
 
-## Data source
+## Data I used
 
 - Table: `SecurityEvent`
 - Event ID: `4625`
 
-## Suggested rule settings
+## How I configured the rule
 
-| Setting | Lab value |
+| Setting | What I used |
 |---|---|
-| Rule type | Scheduled |
-| Frequency | 5 minutes |
-| Period | 5–15 minutes |
-| Threshold idea | >= 5 failures by account/host in the window |
+| Name | Lab - Failed Logons 4625 |
+| Type | Scheduled |
 | Severity | Medium |
+| Run every | 5 minutes |
+| Look back | 15 minutes |
+| Threshold | >= 5 failures by account/host, then alert if results > 0 |
 
 ## KQL
 
 See [`queries/securityevent-4625.kql`](../queries/securityevent-4625.kql).
 
-Tune thresholds after you confirm event volume in your lab.
+## How I validated it
 
-## Validation
-
-1. Generate multiple failed logons on the lab VM
-2. Confirm events in Log Analytics
-3. Confirm analytics rule creates an incident
-4. Screenshot rule + incident → `Evidence/Detection/`
+1. Failed logons on `vm-sentinel-lab`
+2. Confirmed 4625 events in Log Analytics
+3. Confirmed Sentinel created incidents from this rule
+4. Saved screenshots under `Evidence/Detection/`
 
 ## Status
 
-Pending implementation in Azure.
+Done in my lab.

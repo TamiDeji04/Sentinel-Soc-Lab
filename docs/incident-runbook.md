@@ -1,56 +1,59 @@
 # Incident Runbook — Failed Logons / Account Lockout
 
-Use this when Sentinel fires the lab analytics rules for Event ID **4625** or **4740**.
+This is the checklist I use when one of my lab rules fires for **4625** or **4740**.
 
-## 1. Triage (2–5 minutes)
+## 1. Triage (a couple minutes)
 
-- [ ] Open the incident and note severity, tactics, and rule name
-- [ ] Confirm time range and affected account / host
-- [ ] Check whether activity is expected lab testing or unexpected
+- [ ] Open the incident and note the rule name + severity
+- [ ] Check the time range and which account/host got hit
+- [ ] Ask myself: was this me testing, or unexpected noise?
 
-**Questions**
-1. Which account is targeted?
-2. Source host / logon type (if present)?
-3. How many failures in the window?
-4. Did a lockout (4740) follow the failures?
+Questions I ask:
 
-## 2. Validate (true positive vs false positive)
+1. Which account was targeted?
+2. What host did it come from?
+3. How many failures happened in the window?
+4. Did a lockout (4740) show up after the failures?
 
-| Signal | Likely true positive | Likely false positive / lab noise |
+## 2. True positive vs noise
+
+| What I see | I’m leaning true positive | I’m leaning lab noise / FP |
 |---|---|---|
-| Burst of 4625 | Repeated wrong-password attempts | Single typo, known test |
-| 4740 after failures | Lockout policy working / brute force impact | Intentional lockout test |
-| Known test account | Expected during lab exercise | Still document it |
+| Burst of 4625 | Someone / something hammering passwords | One typo, or me testing |
+| 4740 after failures | Lockout actually kicked in | Me intentionally locking a test account |
+| Known lab account | Expected during the exercise | Still worth writing down |
 
-## 3. Investigation steps
+## 3. What I check next
 
-1. Query recent 4625/4740 events for the account/host ([queries](../queries/))
-2. Review account status (locked / unlocked)
-3. Note whether admin unlock was required
-4. Capture screenshots for `Evidence/Investigation/`
+1. Pull recent 4625/4740 events with my queries in [`queries/`](../queries/)
+2. See if the account is locked
+3. Note whether I had to unlock it
+4. Save screenshots in `Evidence/Investigation/`
 
-## 4. Response actions (lab)
+## 4. Lab response
 
-- Document findings in the incident
-- Unlock test account only if needed for continued testing
-- Do not disable production accounts (none in this lab)
+- Add a short note on the incident
+- Unlock the test account only if I need it again
+- Reminder: this lab has no production users
+
+One note I used:
+
+> Lab test: intentional failed logons against a local account to validate the Failed Logons 4625 rule and incident workflow.
 
 ## 5. Closeout
 
-- [ ] Incident notes completed
-- [ ] Evidence screenshots saved
-- [ ] Rule behavior matches expected threshold
-- [ ] README / Evidence index updated
+- [ ] I wrote incident notes
+- [ ] Screenshots are saved
+- [ ] The rule behaved the way I expected
+- [ ] README / evidence index is updated
 
-## Investigation log (fill during lab)
+## Investigation log
 
 | Field | Value |
 |---|---|
-| Date | |
-| Rule name | |
-| Incident ID | |
-| Account | |
-| Host | |
-| Event IDs observed | |
-| Outcome (TP/FP/lab test) | |
-| Notes | |
+| Date | 2026-11-21 |
+| Rule name | Lab - Failed Logons 4625 |
+| Host | vm-sentinel-lab |
+| Event IDs observed | 4625 (primary); 4740 rule created |
+| Outcome | Lab true positive / expected test activity |
+| Notes | Incidents created successfully after failed logon activity. Public RDP also attracted extra spray noise, so I’d restrict access next time. |

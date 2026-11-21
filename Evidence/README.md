@@ -1,54 +1,48 @@
 # Evidence Index
 
-Screenshots from the Azure Sentinel SOC mini-lab (copied from Desktop `Sentinel Project/`; originals preserved there).
+These are the screenshots I kept from the lab. I copied them from my Desktop `Sentinel Project` folder into here and renamed them so the repo stays organized.
 
 ## Configuration
 
-| File | Status | Description |
+| File | Status | What it shows |
 |---|---|---|
-| `Configuration/01-resource-group.png` | Present | Resource groups list showing `nrg-sentinel-soc-lab` and `rg-sentinel-soc-lab` (North Central US) |
-| `Configuration/02-sentinel-overview.png` | Present | Sentinel overview for `law-sentinel-soc-lab` showing incident activity |
-| `Configuration/03-windows-vm.png` | Present | RDP session to `vm-sentinel-lab` (Windows 11 lab desktop); Azure VM blade screenshot optional upgrade |
-| `Configuration/04-data-collection-rule.png` | Present | Windows Security Events via AMA DCR with `vm-sentinel-lab` selected (`dcr-soc-ab`) |
-| `Configuration/05-securityevent-query.png` | Present | `SecurityEvent` query by Computer/EventID including many 4625 events from `vm-sentinel-lab` |
+| `Configuration/01-resource-group.png` | Present | My resource groups list, including the Sentinel lab RGs in North Central US |
+| `Configuration/02-sentinel-overview.png` | Present | Sentinel overview for `law-sentinel-soc-lab` |
+| `Configuration/03-windows-vm.png` | Present | Me RDP’d into `vm-sentinel-lab` |
+| `Configuration/04-data-collection-rule.png` | Present | Windows Security Events via AMA DCR tied to the VM |
+| `Configuration/05-securityevent-query.png` | Present | SecurityEvent query proving logs from `vm-sentinel-lab` |
 
 ## Detection
 
-| File | Status | Description |
+| File | Status | What it shows |
 |---|---|---|
-| `Detection/01-rule-4625.png` | Present | Review + create for `Lab - Failed Logons 4625` (validation passed) |
-| `Detection/02-rule-4740.png` | Present | Review + create for `Lab - Account Lockout 4740` (validation passed) |
-| `Detection/03-incident-fired.png` | Present | Defender/Sentinel Cases list showing multiple `Lab - Failed Logons 4625` incidents |
+| `Detection/01-rule-4625.png` | Present | My Failed Logons 4625 rule ready to save |
+| `Detection/02-rule-4740.png` | Present | My Account Lockout 4740 rule ready to save |
+| `Detection/03-incident-fired.png` | Present | Incidents created by the failed logons rule |
 
 ## Investigation
 
-| File | Status | Description |
+| File | Status | What it shows |
 |---|---|---|
-| `Investigation/01-incident-details.png` | Present | Incident/cases list for failed-logon rule (same capture as incident-fired; open a single incident detail pane if you want a stronger shot) |
-| `Investigation/02-event-query.png` | Present | Query of Event IDs 4625/4740 from `vm-sentinel-lab` |
+| `Investigation/01-incident-details.png` | Present | Incident/cases list from the failed logons activity |
+| `Investigation/02-event-query.png` | Present | 4625/4740 query results during investigation |
 
-## Supporting (optional)
+## Extra supporting shots
 
-Stored under `Evidence/_supporting/` (DCR create flow, rule logic panes, analytics rules list).
+I also kept a few in-progress screens under `Evidence/_supporting/` (DCR create flow, rule logic panes, analytics list).
 
-## Lab notes from evidence
+## What I noticed in the evidence
 
-- Resource group appears as `nrg-sentinel-soc-lab` / `rg-sentinel-soc-lab` in portal tabs; workspace `law-sentinel-soc-lab`; VM `vm-sentinel-lab`; region **North Central US**
-- DCR name: `dcr-soc-ab`
-- Failed logons are clearly flowing; many 4625 incidents were generated
-- 4740 rule exists; investigation query shown was dominated by 4625 (lockout may not have fired yet)
+- Workspace: `law-sentinel-soc-lab`
+- VM: `vm-sentinel-lab`
+- DCR: `dcr-soc-ab`
+- Failed logons clearly flowed and created incidents
+- Opening RDP publicly got noisy with spray attempts against common usernames
 
-## Privacy review before GitHub
+## Before making this public
 
-Screenshots show:
-- Student account identity (`W218505713@student...`, Houston City College)
-- Azure portal tenant/workspace context
-- Public IP of the lab VM in the RDP window title
+I should review screenshots for:
+- student email / school branding
+- public IP in the RDP window title
 
-Crop or redact account/email/public IP before making the repo public if you do not want that visible.
-
-## Security note
-
-Public RDP on a student VM can attract internet password spraying. Evidence shows failed logons against multiple account names (`ADMINISTRATOR`, `ADMIN`, `USER`, etc.). Consider:
-- Restrict NSG RDP to your IP only, or
-- Stop/deallocate the VM when idle, or remove public IP when documentation is done
+I’d crop those if I don’t want them on GitHub.

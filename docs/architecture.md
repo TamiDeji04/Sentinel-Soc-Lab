@@ -1,44 +1,37 @@
 # Architecture
 
-## Overview
+## What I set up
 
-This lab uses a single Azure resource group to host:
+I kept everything inside one Azure lab footprint:
 
-- One small Windows virtual machine (log source)
-- One Log Analytics workspace
-- Microsoft Sentinel enabled on that workspace
-- A Data Collection Rule (DCR) that sends Security Events via Azure Monitor Agent (AMA)
+- A small Windows VM as my log source
+- A Log Analytics workspace to store and query the logs
+- Microsoft Sentinel on top of that workspace
+- A Data Collection Rule so Azure Monitor Agent could ship Windows Security events
 
-## Data flow
+## How data moves
 
 ```text
-1. User generates failed logons / lockout on Windows VM
-2. Windows writes Security events locally
-3. AMA collects configured Security Events through DCR
-4. Events land in Log Analytics (SecurityEvent table)
-5. Sentinel analytics rules evaluate scheduled KQL
-6. Matching activity creates an incident for investigation
+1. I generate failed logons (or a lockout) on the VM
+2. Windows writes those events to the Security log
+3. Azure Monitor Agent picks them up through my DCR
+4. They show up in Log Analytics as SecurityEvent rows
+5. My Sentinel analytics rules run on a schedule
+6. Matching activity creates an incident I can investigate
 ```
 
-## Components
+## Components I used
 
-| Component | Name (lab default) | Role |
+| Piece | Name | What it’s for |
 |---|---|---|
-| Resource group | `rg-sentinel-soc-lab` | Boundary for all lab resources |
-| Windows VM | `vm-sentinel-lab` (suggested) | Generates Security events |
-| Log Analytics | `law-sentinel-soc-lab` (suggested) | Log storage/query |
-| Sentinel | Enabled on LAW | Detection + incident management |
-| DCR / AMA | Security Events collection | Shipping path |
+| Resource group | `rg-sentinel-soc-lab` / `nrg-sentinel-soc-lab` | Keeps the lab resources together |
+| Windows VM | `vm-sentinel-lab` | Where the Security events come from |
+| Log Analytics | `law-sentinel-soc-lab` | Where I query the logs |
+| Sentinel | Enabled on that workspace | Detections + incidents |
+| DCR / AMA | `dcr-soc-ab` + Azure Monitor Agent | The shipping path |
 
-## Trust / identity notes
+## Things I kept in mind
 
-- Lab uses a dedicated local or Entra-joined test account for failed-logon testing where practical
-- No production identities
-- Least privilege for any custom roles created during setup
-
-## Cost controls
-
-- B-series VM size
-- Stop/deallocate VM when not collecting evidence
-- Short retention (about 30 days)
-- Delete entire resource group after documentation is complete
+- This is a student lab, not production identity work
+- I used the VM mainly as a controlled place to generate and collect Security events
+- I tried to keep cost down: small VM size, stop it when I’m idle, and delete the resource group when I’m fully done

@@ -1,67 +1,70 @@
-# Azure Sentinel SOC Lab
+# Sentinel SOC Lab
 
-Microsoft Sentinel mini-lab for entry-level SOC / cybersecurity portfolio work.
+I built this lab to get hands-on with **Microsoft Sentinel** the way a junior SOC analyst would: pull in Windows Security logs, write detections, and actually investigate an alert.
 
-This lab deploys a small Azure environment that:
+I used my Azure for Students subscription and kept the setup small on purpose. This is a learning lab, not a production SOC.
 
-1. Ingests Windows Security events into Log Analytics
-2. Enables Microsoft Sentinel
-3. Creates analytics rules for failed logons (**Event ID 4625**) and account lockouts (**Event ID 4740**)
-4. Investigates a triggered incident and documents a short SOC-style runbook
+## What I did
 
-**Scope:** Student Azure lab using a small Windows VM. Not a production SOC deployment.
+1. Stood up a Log Analytics workspace and turned on Microsoft Sentinel
+2. Deployed a Windows VM and shipped Security events with Azure Monitor Agent + a Data Collection Rule
+3. Confirmed logs were landing in the `SecurityEvent` table
+4. Created analytics rules for failed logons (**4625**) and account lockouts (**4740**)
+5. Triggered failed logons, watched incidents show up, and documented how I’d triage them
 
 ## Environment
 
-| Item | Value |
+| Piece | What I used |
 |---|---|
-| Cloud | Microsoft Azure (student subscription) |
-| Log source | Azure Windows VM + Azure Monitor Agent |
+| Cloud | Azure for Students |
+| Region | North Central US (the region my student sub allowed) |
+| Resource group | `rg-sentinel-soc-lab` / `nrg-sentinel-soc-lab` |
+| Workspace | `law-sentinel-soc-lab` |
+| VM | `vm-sentinel-lab` |
 | SIEM | Microsoft Sentinel |
-| Resource group | `rg-sentinel-soc-lab` |
 
-## Architecture
+## How the pieces fit together
 
 ```text
-Windows Lab VM
+My Windows lab VM
   → Azure Monitor Agent / Data Collection Rule
-    → Log Analytics Workspace
+    → Log Analytics workspace
       → Microsoft Sentinel
-        → Analytics rules (4625, 4740)
-          → Incident → investigation notes
+        → My analytics rules (4625, 4740)
+          → Incidents I investigated
 ```
 
-## Detections
+## Detections I wrote
 
-| Rule | Event ID | Purpose |
+| Rule | Event ID | Why I cared |
 |---|---|---|
-| Failed logon burst | 4625 | Detect repeated failed authentications |
-| Account lockout | 4740 | Detect account lockout events |
+| Lab - Failed Logons 4625 | 4625 | Catch repeated failed sign-ins |
+| Lab - Account Lockout 4740 | 4740 | Catch lockouts after those failures |
 
-Query drafts: [`queries/`](queries/)  
-Rule notes: [`detections/`](detections/)
+KQL lives in [`queries/`](queries/).  
+Rule notes are in [`detections/`](detections/).
 
 ## Evidence
 
-Screenshots and proof live in [`Evidence/`](Evidence/). See [`Evidence/README.md`](Evidence/README.md) for status.
+I saved screenshots under [`Evidence/`](Evidence/).  
+Index: [`Evidence/README.md`](Evidence/README.md)
 
-| Area | Status |
-|---|---|
-| Configuration | Pending |
-| Detection | Pending |
-| Investigation | Pending |
+You’ll see the full path there: resource group → Sentinel → VM → DCR → log query → rules → incidents.
 
-## Docs
+## Docs I wrote for myself (and anyone following along)
 
 - [Architecture](docs/architecture.md)
 - [Setup guide](docs/setup-guide.md)
 - [Incident runbook](docs/incident-runbook.md)
 
-## Related projects
+## Related work
 
-- [Enterprise Security Controls](https://github.com/TamiDeji04/Enterprise-Security-Controls) — Windows lockout policy + 4625/4740 evidence
-- [Splunk SOC Detection Lab](https://github.com/TamiDeji04/Splunk-SOC-Detection-Lab) — Splunk/Sysmon detection practice
+- [Enterprise Security Controls](https://github.com/TamiDeji04/Enterprise-Security-Controls) — I configured Windows account lockout and reviewed 4625/4740 on the endpoint side
+- [Splunk SOC Detection Lab](https://github.com/TamiDeji04/Splunk-SOC-Detection-Lab) — similar detection practice in Splunk
 
-## Disclaimer
+## Honest notes
 
-Educational lab only. Do not commit passwords, tenant secrets, or production data. Shut down the lab VM when idle and delete the resource group when finished documenting.
+- Student lab only. No real production tenants or customer data.
+- I don’t store passwords or secrets in this repo.
+- Opening RDP to the internet got noisy fast (password spray traffic). I’d lock RDP down or shut the VM off when I’m not testing.
+- When I’m done documenting, I stop/deallocate the VM so I don’t burn student credit.

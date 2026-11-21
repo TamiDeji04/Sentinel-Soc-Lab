@@ -1,44 +1,41 @@
 # Detection: Account Lockout (Event ID 4740)
 
-## Purpose
+## Why I built this
 
-Detect Windows account lockout events, which often follow repeated failed authentications and can indicate brute-force impact or lockout abuse.
+Failed logons are useful, but lockouts tell me the failures actually impacted an account. I wanted a second rule specifically for Event ID 4740.
 
-## MITRE ATT&CK
+## MITRE ATT&CK mapping (lab)
 
-- Tactic: Credential Access / Impact (context-dependent)
-- Related technique notes: Brute Force (T1110) — lab mapping
+- Tactic: Credential Access (and sometimes Impact, depending on context)
+- Related technique: Brute Force (T1110)
 
-## Data source
+## Data I used
 
 - Table: `SecurityEvent`
 - Event ID: `4740`
 
-## Suggested rule settings
+## How I configured the rule
 
-| Setting | Lab value |
+| Setting | What I used |
 |---|---|
-| Rule type | Scheduled |
-| Frequency | 5 minutes |
-| Period | 5–15 minutes |
-| Threshold idea | Any 4740 in lab, or >= 1 per account |
-| Severity | Medium/High |
+| Name | Lab - Account Lockout 4740 |
+| Type | Scheduled |
+| Severity | High |
+| Run every | 5 minutes |
+| Look back | 15 minutes |
+| Threshold | Alert if the query returns any rows |
 
 ## KQL
 
 See [`queries/securityevent-4740.kql`](../queries/securityevent-4740.kql).
 
-## Validation
+## How this ties to my other lab
 
-1. Trigger lockout on a test account (if local policy allows), or ensure 4740 appears from lab testing
-2. Confirm event in Log Analytics
-3. Confirm analytics rule creates an incident
-4. Screenshot rule + incident → `Evidence/Detection/`
+I also did a Windows lockout policy lab here:  
+[Enterprise Security Controls](https://github.com/TamiDeji04/Enterprise-Security-Controls)
 
-## Relationship to other projects
-
-Pairs with [Enterprise Security Controls](https://github.com/TamiDeji04/Enterprise-Security-Controls), which configured local lockout threshold/duration and captured 4625/4740 evidence on Windows.
+That one was about configuring lockout on the endpoint. This one is about detecting it in Sentinel.
 
 ## Status
 
-Pending implementation in Azure.
+Rule created and enabled in my lab. My investigation screenshots were heavier on 4625 activity; 4740 is ready whenever lockout events show up.
